@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Alpha Fitness</string>
+    <string name="title_activity_record_workout">Record Workout</string>
+</resources>
