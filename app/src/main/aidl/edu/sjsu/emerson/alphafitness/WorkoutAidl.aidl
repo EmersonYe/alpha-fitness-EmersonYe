@@ -5,7 +5,6 @@ package edu.sjsu.emerson.alphafitness;
 
 interface WorkoutAidl {
 
-    int square(in int value);
     void toggleStatus();
 
     /**

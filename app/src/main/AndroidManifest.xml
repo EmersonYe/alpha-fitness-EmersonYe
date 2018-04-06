@@ -41,9 +41,15 @@
 
         <service
             android:name=".WorkoutTrackerService"
-            android:process=":anotherProcess"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"
+            android:process=":anotherProcess" />
+
+        <provider
+            android:name=".LocationContentProvider"
+            android:authorities="edu.sjsu.emerson.alphafitness.provider"
+            android:enabled="true"
+            android:exported="true"></provider>
     </application>
 
 </manifest>

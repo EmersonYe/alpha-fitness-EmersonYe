@@ -136,7 +136,6 @@ public class RecordWorkoutActivity extends AppCompatActivity
     public void toggleWorkoutState(View view)
     {
         try {
-            Toast.makeText(RecordWorkoutActivity.this, Integer.toString(remoteService.square(10)), Toast.LENGTH_SHORT).show();
             remoteService.toggleStatus();
         } catch (RemoteException e) {
             e.printStackTrace();
