@@ -23,33 +23,35 @@ public class LocationContentProvider extends ContentProvider
     private final static String TAG = LocationContentProvider.class.getSimpleName();
 
     static final String PROVIDER = "edu.sjsu.emerson.alphafitness.provider";
-    static final String URL = "content://" + PROVIDER + "/devices";
+    static final String DATABASE_NAME = "provider";
+    static final String URL = "content://" + PROVIDER + "/workouts";
     static final Uri URI = Uri.parse(URL);
+
+    static final String WORKOUTS_TABLE_NAME = "workouts";
     static final String _ID = "_id";
-    static final String NAME = "name";
-    static final String BATTERY = "battery";
+    static final String START_DATE = "start_date";
+    static final String DURATION = "duration";
+    static final String STEP_COUNT = "step_count";
+    static final int DATABASE_VERSION = 1;
+    static final String CREATE_DB_TABLE =
+            " CREATE TABLE " + WORKOUTS_TABLE_NAME +
+                    " (_id INTEGER PRIMARY KEY AUTOINCREMENT. " +
+                    " " + START_DATE + " TEXT NOT NULL, " +
+                    " " + DURATION + " TEXT NOT NULL, " +
+                    " " + STEP_COUNT + " INTEGER NOT NULL);";
 
-
-    static final int DEVICES = 1;
-    static final int DEVICE_ID = 2;
+    static final int WORKOUTS = 1;
+    static final int WORKOUT_ID = 2;
     static final UriMatcher uriMatcher;
 
     static{
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(PROVIDER, "devices", DEVICE_ID);
-        uriMatcher.addURI(PROVIDER, "devices/#", DEVICE_ID);
+        uriMatcher.addURI(PROVIDER, "workouts", WORKOUT_ID);
+        uriMatcher.addURI(PROVIDER, "workouts/#", WORKOUT_ID);
     }
 
-    static final String DATABASE_NAME = "provider";
-    static final String DEVICES_TABLE_NAME = "devices";
-    static final int DATABASE_VERSION = 1;
-    static final String CREATE_DB_TABLE =
-            " CREATE TABLE " + DEVICES_TABLE_NAME +
-                    " (_id INTEGER PRIMARY KEY AUTOINCREMENT. " +
-                    " name TEXT NOT NULL, " +
-                    " battery TEXT NOT NULL);";
 
-    private static HashMap<String, String> DEVICES_PROJECTION_MAP;
+    private static HashMap<String, String> WORKOUTS_PROJECTION_MAP;
     private SQLiteDatabase db;
     Context mContext;
 
@@ -69,7 +71,7 @@ public class LocationContentProvider extends ContentProvider
     @Override
     public boolean onCreate()
     {
-        Log.v(TAG, "conten provider: onCreate()");
+        Log.v(TAG, "content provider: onCreate()");
 
         mContext = getContext();
         if (mContext == null) {
@@ -106,16 +108,16 @@ public class LocationContentProvider extends ContentProvider
         Log.v(TAG, "content provider: query()");
 
         SQLiteQueryBuilder sqLiteQueryBuilder = new SQLiteQueryBuilder();
-        sqLiteQueryBuilder.setTables(DEVICES_TABLE_NAME);
+        sqLiteQueryBuilder.setTables(WORKOUTS_TABLE_NAME);
 
-        if (getMatchedID(uri) == DEVICES) {
-            sqLiteQueryBuilder.setProjectionMap(DEVICES_PROJECTION_MAP);
+        if (getMatchedID(uri) == WORKOUTS) {
+            sqLiteQueryBuilder.setProjectionMap(WORKOUTS_PROJECTION_MAP);
         } else {
             sqLiteQueryBuilder.appendWhere( getIdString(uri));
         }
 
         if (sortOrder == null || sortOrder == ""){
-            sortOrder = NAME;
+            sortOrder = _ID;
         }
         Cursor c = sqLiteQueryBuilder.query(db, projection, selection,
                 selectionArgs, null, null, sortOrder);
@@ -142,11 +144,11 @@ public class LocationContentProvider extends ContentProvider
         int count = 0;
         int matchedID = getMatchedID(uri);
 
-        String sel_str = (matchedID == DEVICE_ID) ?
+        String sel_str = (matchedID == WORKOUT_ID) ?
                 getSelectionWithID(uri, selection) : selection;
 
         count = db.update(
-                DEVICES_TABLE_NAME,
+                WORKOUTS_TABLE_NAME,
                 values,
                 sel_str,
                 selectionArgs);
@@ -167,7 +169,7 @@ public class LocationContentProvider extends ContentProvider
     {
         Log.v(TAG, "content provider: insert()");
 
-        long row = db.insert(DEVICES_TABLE_NAME, "", values);
+        long row = db.insert(WORKOUTS_TABLE_NAME, "", values);
 
         if (row > 0) {
             Uri _uri = ContentUris.withAppendedId(URI, row);
@@ -188,11 +190,11 @@ public class LocationContentProvider extends ContentProvider
         Log.v(TAG, "content provider: getType()");
 
         // NOTE: these may be wrong!
-        // notes say to return "vnd.android.cursor.dir/vnd.wearable.devices";
-        if (getMatchedID(uri) == DEVICES)
-            return "vnd.android.cursor.dir/vnd.sjsu.emerson.devices";
+        // notes say to return "vnd.android.cursor.dir/vnd.wearable.workouts";
+        if (getMatchedID(uri) == WORKOUTS)
+            return "vnd.android.cursor.dir/vnd.sjsu.emerson.workouts";
         else
-            return "vnd.android.cursor.item/vnd.sjsu.emerson.devices";
+            return "vnd.android.cursor.item/vnd.sjsu.emerson.workouts";
 
     }
 
@@ -209,11 +211,11 @@ public class LocationContentProvider extends ContentProvider
         Log.v(TAG, "content provider: delete()");
 
         int count = 0;
-         String sel_str = (getMatchedID(uri) == DEVICES) ?
+         String sel_str = (getMatchedID(uri) == WORKOUTS) ?
                  getSelectionWithID(uri, selection) : selection;
 
          count = db.delete(
-                 DEVICES_TABLE_NAME,
+                 WORKOUTS_TABLE_NAME,
                  sel_str,
                  selectionArgs);
          notifyChange(uri);
@@ -227,7 +229,7 @@ public class LocationContentProvider extends ContentProvider
     }
 
     /**
-     * Checks if the uri matches with either DEVICES or DEVICE_ID and thows
+     * Checks if the uri matches with either workoutS or workout_ID and thows
      * an exception if the current URI is not supported
      *
      * @param uri
@@ -236,7 +238,7 @@ public class LocationContentProvider extends ContentProvider
     private int getMatchedID(Uri uri)
     {
         int matchedID = uriMatcher.match(uri);
-        if (!(matchedID == DEVICES || matchedID == DEVICE_ID))
+        if (!(matchedID == WORKOUTS || matchedID == WORKOUT_ID))
             throw new IllegalArgumentException("Unsupported URI: " + uri);
         return matchedID;
     }
@@ -289,7 +291,7 @@ public class LocationContentProvider extends ContentProvider
         @Override
         public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1)
         {
-            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + DEVICES_TABLE_NAME);
+            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + WORKOUTS_TABLE_NAME);
             onCreate(sqLiteDatabase);
         }
     }
