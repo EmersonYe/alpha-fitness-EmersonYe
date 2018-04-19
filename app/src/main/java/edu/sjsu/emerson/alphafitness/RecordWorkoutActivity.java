@@ -41,7 +41,6 @@ public class RecordWorkoutActivity extends AppCompatActivity
 
     private GoogleMap mMap;
     private Button mStartWorkoutButton;
-    WorkoutAidl remoteService;
     RemoteConnection remoteConnection = null;
 
     class RemoteConnection implements ServiceConnection
@@ -50,14 +49,12 @@ public class RecordWorkoutActivity extends AppCompatActivity
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service)
         {
-            remoteService = WorkoutAidl.Stub.asInterface(service);
             Toast.makeText(RecordWorkoutActivity.this, "Remote service connected", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName)
         {
-            remoteService = null;
             Toast.makeText(RecordWorkoutActivity.this, "Remote service disconnected", Toast.LENGTH_SHORT).show();
         }
     }
@@ -72,7 +69,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        mStartWorkoutButton = this.findViewById(R.id.button_start);
+        mStartWorkoutButton = findViewById(R.id.button_start);
 
         remoteConnection = new RemoteConnection();
         Intent intent = new Intent();
@@ -135,10 +132,6 @@ public class RecordWorkoutActivity extends AppCompatActivity
 
     public void toggleWorkoutState(View view)
     {
-        try {
-            remoteService.toggleStatus();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+
     }
 }
