@@ -50,7 +50,7 @@
             android:name=".LocationContentProvider"
             android:authorities="edu.sjsu.emerson.alphafitness.provider"
             android:enabled="true"
-            android:exported="true"></provider>
+            android:exported="true" />
     </application>
 
 </manifest>

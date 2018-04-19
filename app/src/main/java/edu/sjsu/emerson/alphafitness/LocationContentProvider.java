@@ -30,14 +30,16 @@ public class LocationContentProvider extends ContentProvider
     static final String WORKOUTS_TABLE_NAME = "workouts";
     static final String _ID = "_id";
     static final String START_DATE = "start_date";
+    static final String DISTANCE = "distance";
     static final String DURATION = "duration";
     static final String STEP_COUNT = "step_count";
     static final int DATABASE_VERSION = 1;
     static final String CREATE_DB_TABLE =
             " CREATE TABLE " + WORKOUTS_TABLE_NAME +
-                    " (_id INTEGER PRIMARY KEY AUTOINCREMENT. " +
-                    " " + START_DATE + " TEXT NOT NULL, " +
-                    " " + DURATION + " TEXT NOT NULL, " +
+                    " (" + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    " " + START_DATE + " INTEGER NOT NULL, " +
+                    " " + DISTANCE + " INTEGER NOT NULL, " +
+                    " " + DURATION + " INTEGER NOT NULL, " +
                     " " + STEP_COUNT + " INTEGER NOT NULL);";
 
     static final int WORKOUTS = 1;
