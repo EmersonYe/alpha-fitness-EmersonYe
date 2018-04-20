@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -22,6 +23,8 @@ import static edu.sjsu.emerson.alphafitness.WorkoutTrackerService.LONGITUDE;
 
 public class RecordWorkoutActivity extends AppCompatActivity
 {
+    private static final String TAG = "RecordWorkoutActivity";
+    onNewLocationListener mListener;
     private static ArrayList<LatLng> locationsToDraw = new ArrayList<>();
     // test values
     private static final LatLng ADELAIDE = new LatLng(-34.92873, 138.59995);
@@ -52,8 +55,9 @@ public class RecordWorkoutActivity extends AppCompatActivity
             if (Objects.equals(intent.getAction(), BROADCAST_LOCATION_CHANGE)) {
                 double latitude = intent.getDoubleExtra(LATITUDE, 0);
                 double longitude = intent.getDoubleExtra(LONGITUDE, 0);
-                LatLng newLocation = new LatLng(latitude,longitude);
+                LatLng newLocation = new LatLng(latitude, longitude);
                 locationsToDraw.add(newLocation);
+                mListener.onNewLocation(locationsToDraw);
             }
         }
     };
@@ -76,8 +80,29 @@ public class RecordWorkoutActivity extends AppCompatActivity
         unregisterReceiver(receiver);
     }
 
-    public static ArrayList<LatLng> getLocationsToDraw()
+
+    interface onNewLocationListener
     {
-        return locationsToDraw;
+        void onNewLocation(ArrayList<LatLng> locationsToDraw);
     }
+
+    /**
+     * Called when a fragment is attached to the activity.
+     * <p>
+     * <p>This is called after the attached fragment's <code>onAttach</code> and before
+     * the attached fragment's <code>onCreate</code> if the fragment has not yet had a previous
+     * call to <code>onCreate</code>.</p>
+     *
+     * @param fragment fragment to attach as a listener
+     */
+    @Override
+    public void onAttachFragment(Fragment fragment)
+    {
+        super.onAttachFragment(fragment);
+        if (fragment instanceof onNewLocationListener) {
+            mListener = (onNewLocationListener) fragment;
+            Log.e(TAG, "Fragment attached and listening for new locations ");
+        }
+    }
+
 }

@@ -67,7 +67,7 @@ public class WorkoutTrackerService extends Service implements SensorEventListene
     {
         Location mLastLocation;
 
-        public LocationListener(String provider)
+        LocationListener(String provider)
         {
             Log.e(TAG, "LocationListener " + provider);
             mLastLocation = new Location(provider);
@@ -81,6 +81,7 @@ public class WorkoutTrackerService extends Service implements SensorEventListene
             Intent intent = new Intent(BROADCAST_LOCATION_CHANGE);
             intent.putExtra(LATITUDE, mLastLocation.getLatitude());
             intent.putExtra(LONGITUDE, mLastLocation.getLongitude());
+            sendBroadcast(intent);
         }
 
         @Override

@@ -103,6 +103,6 @@ android:orientation="vertical">
     android:id="@+id/button_start"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:onClick="toggleWorkoutState"
+    android:onClick="toggleWorkoutClicked"
     android:text="@string/start_workout" />
 </LinearLayout>
