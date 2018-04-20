@@ -1,32 +1,19 @@
 package edu.sjsu.emerson.alphafitness;
 
-import android.Manifest;
 import android.app.Fragment;
-import android.content.pm.PackageManager;
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import static android.content.Context.BIND_AUTO_CREATE;
 
 public class RecordWorkoutPortraitFragment extends Fragment
 {
@@ -52,11 +39,10 @@ public class RecordWorkoutPortraitFragment extends Fragment
         mMapView.getMapAsync(new OnMapReadyCallback()
         {
             @Override
-            public void onMapReady(GoogleMap mMap)
+            public void onMapReady(GoogleMap mMap) throws SecurityException
             {
                 googleMap = mMap;
 
-                enableMyLocation();
                 // For showing a move to my location button
                 googleMap.setMyLocationEnabled(true);
 
@@ -101,19 +87,4 @@ public class RecordWorkoutPortraitFragment extends Fragment
         mMapView.onLowMemory();
     }
 
-    /**
-     * Enables the My Location layer if the fine location permission has been granted.
-     */
-    private void enableMyLocation()
-    {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission to access the location is missing.
-            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
-                    Manifest.permission.ACCESS_FINE_LOCATION, true);
-        } else if (mMap != null) {
-            // Access to the location has been granted to the app.
-            mMap.setMyLocationEnabled(true);
-        }
-    }
 }
