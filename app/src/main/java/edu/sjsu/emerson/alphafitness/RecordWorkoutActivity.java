@@ -14,7 +14,6 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import static edu.sjsu.emerson.alphafitness.WorkoutTrackerService.BROADCAST_LOCATION_CHANGE;
 import static edu.sjsu.emerson.alphafitness.WorkoutTrackerService.BROADCAST_STEP_COUNTER;
@@ -52,20 +51,24 @@ public class RecordWorkoutActivity extends AppCompatActivity
         @Override
         public void onReceive(Context context, Intent intent)
         {
-            Log.e(TAG, "Intent received. Action: " + intent.getAction());
-            if (Objects.equals(intent.getAction(), BROADCAST_STEP_COUNTER)) {
-                Toast.makeText(RecordWorkoutActivity.this, "Received step update", Toast.LENGTH_LONG).show();
-            }
-            else if (Objects.equals(intent.getAction(), BROADCAST_LOCATION_CHANGE)) {
-                double latitude = intent.getDoubleExtra(LATITUDE, 0);
-                double longitude = intent.getDoubleExtra(LONGITUDE, 0);
-                LatLng newLocation = new LatLng(latitude, longitude);
-                locationsToDraw.add(newLocation);
-                mListener.onNewLocation(locationsToDraw);
-            }
-            else if (Objects.equals(intent.getAction(), BROADCAST_NEW_WORKOUT)) {
-                locationsToDraw.clear();
-                Log.i(TAG, "locationsToDraw cleared");
+            Log.d(TAG, "Intent received. Action: " + intent.getAction());
+            switch(intent.getAction()){
+                case BROADCAST_LOCATION_CHANGE:
+                    double latitude = intent.getDoubleExtra(LATITUDE, 0);
+                    double longitude = intent.getDoubleExtra(LONGITUDE, 0);
+                    LatLng newLocation = new LatLng(latitude, longitude);
+                    locationsToDraw.add(newLocation);
+                    mListener.onNewLocation(locationsToDraw);
+                    break;
+                case BROADCAST_STEP_COUNTER:
+                    Toast.makeText(RecordWorkoutActivity.this, "Received step update", Toast.LENGTH_LONG).show();
+                    break;
+                case BROADCAST_NEW_WORKOUT:
+                    locationsToDraw.clear();
+                    Log.i(TAG, "locationsToDraw cleared");
+                    break;
+                default:
+                    break;
             }
         }
     };
