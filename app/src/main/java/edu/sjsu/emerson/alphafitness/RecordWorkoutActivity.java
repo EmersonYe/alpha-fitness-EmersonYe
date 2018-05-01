@@ -20,6 +20,7 @@ import static edu.sjsu.emerson.alphafitness.WorkoutTrackerService.BROADCAST_LOCA
 import static edu.sjsu.emerson.alphafitness.WorkoutTrackerService.BROADCAST_STEP_COUNTER;
 import static edu.sjsu.emerson.alphafitness.WorkoutTrackerService.LATITUDE;
 import static edu.sjsu.emerson.alphafitness.WorkoutTrackerService.LONGITUDE;
+import static edu.sjsu.emerson.alphafitness.RecordWorkoutPortraitFragment.BROADCAST_NEW_WORKOUT;
 
 public class RecordWorkoutActivity extends AppCompatActivity
 {
@@ -38,10 +39,12 @@ public class RecordWorkoutActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_workout);
 
+        /* add test values to locations to draw
         locationsToDraw.add(ADELAIDE);
         locationsToDraw.add(DARWIN);
         locationsToDraw.add(MELBOURNE);
         locationsToDraw.add(PERTH);
+        */
     }
 
     private BroadcastReceiver receiver = new BroadcastReceiver()
@@ -49,15 +52,20 @@ public class RecordWorkoutActivity extends AppCompatActivity
         @Override
         public void onReceive(Context context, Intent intent)
         {
+            Log.e(TAG, "Intent received. Action: " + intent.getAction());
             if (Objects.equals(intent.getAction(), BROADCAST_STEP_COUNTER)) {
                 Toast.makeText(RecordWorkoutActivity.this, "Received step update", Toast.LENGTH_LONG).show();
             }
-            if (Objects.equals(intent.getAction(), BROADCAST_LOCATION_CHANGE)) {
+            else if (Objects.equals(intent.getAction(), BROADCAST_LOCATION_CHANGE)) {
                 double latitude = intent.getDoubleExtra(LATITUDE, 0);
                 double longitude = intent.getDoubleExtra(LONGITUDE, 0);
                 LatLng newLocation = new LatLng(latitude, longitude);
                 locationsToDraw.add(newLocation);
                 mListener.onNewLocation(locationsToDraw);
+            }
+            else if (Objects.equals(intent.getAction(), BROADCAST_NEW_WORKOUT)) {
+                locationsToDraw.clear();
+                Log.i(TAG, "locationsToDraw cleared");
             }
         }
     };
@@ -68,9 +76,11 @@ public class RecordWorkoutActivity extends AppCompatActivity
         super.onResume();
         IntentFilter intentFilterStep = new IntentFilter(BROADCAST_STEP_COUNTER);
         IntentFilter intentFilterLocation = new IntentFilter(BROADCAST_LOCATION_CHANGE);
+        IntentFilter intentFilterNewWorkout = new IntentFilter(BROADCAST_NEW_WORKOUT);
 
         registerReceiver(receiver, intentFilterStep);
         registerReceiver(receiver, intentFilterLocation);
+        registerReceiver(receiver, intentFilterNewWorkout);
     }
 
     @Override

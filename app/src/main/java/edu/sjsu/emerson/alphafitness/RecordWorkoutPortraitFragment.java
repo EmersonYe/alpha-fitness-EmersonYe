@@ -23,6 +23,8 @@ import java.util.ArrayList;
 
 public class RecordWorkoutPortraitFragment extends Fragment implements RecordWorkoutActivity.onNewLocationListener
 {
+    public static final String BROADCAST_NEW_WORKOUT = "BroadcastNewWorkout";
+
     private static final String TAG = "PortraitFragment";
     MapView mMapView;
     private GoogleMap googleMap;
@@ -42,6 +44,9 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
                 if (!isServiceRunning(WorkoutTrackerService.class)) {
                     getActivity().startService(intent);
                     toggleWorkoutButton.setText(R.string.stop_workout);
+                    // Notify Activity to clear past locations
+                    Intent broadcastIntent = new Intent(BROADCAST_NEW_WORKOUT);
+                    getActivity().sendBroadcast(broadcastIntent);
                     Log.i(TAG, "WorkoutTrackerService started");
                 } else {
                     getActivity().stopService(intent);

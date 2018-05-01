@@ -22,9 +22,9 @@ public class WorkoutTrackerService extends Service implements SensorEventListene
     public static final String LONGITUDE = "longitude";
 
     private static final String TAG = "WorkoutTrackerService";
-    private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 1000;
     private static final float LOCATION_DISTANCE = 10f;
+    private LocationManager mLocationManager = null;
 
     private int stepCount = 0;
     private int stepsBeforeStart = 0;
