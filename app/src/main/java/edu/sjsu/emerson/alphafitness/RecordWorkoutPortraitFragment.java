@@ -5,11 +5,13 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Chronometer;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -29,29 +31,38 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
     MapView mMapView;
     private GoogleMap googleMap;
     private Polyline mPolyline;
+    private Chronometer mChronometer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View rootView = inflater.inflate(R.layout.fragment_record_workout_portrait, container, false);
+        mChronometer = rootView.findViewById(R.id.chronometer);
         final Button toggleWorkoutButton = rootView.findViewById(R.id.button_start);
+
         toggleWorkoutButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
                 Intent intent = new Intent(getActivity(), WorkoutTrackerService.class);
+                // Start WorkoutTrackerService, notify Activity to reset locations, start mChronometer
                 if (!isServiceRunning(WorkoutTrackerService.class)) {
                     getActivity().startService(intent);
-                    toggleWorkoutButton.setText(R.string.stop_workout);
                     // Notify Activity to clear past locations
                     Intent broadcastIntent = new Intent(BROADCAST_NEW_WORKOUT);
                     getActivity().sendBroadcast(broadcastIntent);
-                    Log.i(TAG, "WorkoutTrackerService started");
+                    // Start mChronometer
+                    mChronometer.setBase(SystemClock.elapsedRealtime());
+                    mChronometer.start();
+                    toggleWorkoutButton.setText(R.string.stop_workout);
+                    Log.i(TAG, "Workout started");
                 } else {
                     getActivity().stopService(intent);
+                    // Stop mChronometer
+                    mChronometer.stop();
                     toggleWorkoutButton.setText(R.string.start_workout);
-                    Log.i(TAG, "WorkoutTrackerService stopped");
+                    Log.i(TAG, "Workout stopped");
                 }
             }
         });
