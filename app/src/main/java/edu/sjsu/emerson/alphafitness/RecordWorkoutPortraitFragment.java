@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -32,12 +33,14 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
     private GoogleMap googleMap;
     private Polyline mPolyline;
     private Chronometer mChronometer;
+    private TextView mDistanceText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View rootView = inflater.inflate(R.layout.fragment_record_workout_portrait, container, false);
         mChronometer = rootView.findViewById(R.id.chronometer);
+        mDistanceText = rootView.findViewById(R.id.text_distance);
         final Button toggleWorkoutButton = rootView.findViewById(R.id.button_start);
 
         toggleWorkoutButton.setOnClickListener(new View.OnClickListener()
@@ -87,11 +90,8 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
 
                 // For showing a move to my location button
                 googleMap.setMyLocationEnabled(true);
-
-                //googleMap.addPolyline(new PolylineOptions().addAll(RecordWorkoutActivity.getLocationsToDraw()));
             }
         });
-
         return rootView;
     }
 
@@ -124,14 +124,17 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
     }
 
     @Override
-    public void onNewLocation(ArrayList<LatLng> locationsToDraw)
+    public void onNewLocation(ArrayList<LatLng> locationsToDraw, double distance)
     {
         if (mPolyline != null)
             mPolyline.remove();
         mPolyline = googleMap.addPolyline(new PolylineOptions().addAll(locationsToDraw));
+        String formattedDistance = String.format("%.1f", distance);
+        mDistanceText.setText(formattedDistance);
     }
 
-    private boolean isServiceRunning(Class<?> serviceClass) {
+    private boolean isServiceRunning(Class<?> serviceClass)
+    {
         ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {

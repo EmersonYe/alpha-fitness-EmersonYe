@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,8 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+
+import edu.sjsu.emerson.alphafitness.Utils.LocationUtils;
 
 import static edu.sjsu.emerson.alphafitness.WorkoutTrackerService.BROADCAST_LOCATION_CHANGE;
 import static edu.sjsu.emerson.alphafitness.WorkoutTrackerService.BROADCAST_STEP_COUNTER;
@@ -26,6 +29,8 @@ public class RecordWorkoutActivity extends AppCompatActivity
     private static final String TAG = "RecordWorkoutActivity";
     onNewLocationListener mListener;
     private static ArrayList<LatLng> locationsToDraw = new ArrayList<>();
+    private double distance;
+
     // test values
     private static final LatLng ADELAIDE = new LatLng(-34.92873, 138.59995);
     private static final LatLng DARWIN = new LatLng(-12.4258647, 130.7932231);
@@ -52,19 +57,27 @@ public class RecordWorkoutActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent)
         {
             Log.d(TAG, "Intent received. Action: " + intent.getAction());
-            switch(intent.getAction()){
+            switch (intent.getAction()) {
                 case BROADCAST_LOCATION_CHANGE:
                     double latitude = intent.getDoubleExtra(LATITUDE, 0);
                     double longitude = intent.getDoubleExtra(LONGITUDE, 0);
                     LatLng newLocation = new LatLng(latitude, longitude);
+                    // Calculate distance from last to new location
+                    double newDistance = 0;
+                    if (!locationsToDraw.isEmpty()) {
+                        LatLng lastLocation = locationsToDraw.get(locationsToDraw.size()-1);
+                        newDistance = LocationUtils.distanceBetween(lastLocation,newLocation);
+                    }
+                    distance += newDistance;
                     locationsToDraw.add(newLocation);
-                    mListener.onNewLocation(locationsToDraw);
+                    mListener.onNewLocation(locationsToDraw, distance);
                     break;
                 case BROADCAST_STEP_COUNTER:
                     Toast.makeText(RecordWorkoutActivity.this, "Received step update", Toast.LENGTH_LONG).show();
                     break;
                 case BROADCAST_NEW_WORKOUT:
                     locationsToDraw.clear();
+                    distance = 0;
                     Log.i(TAG, "locationsToDraw cleared");
                     break;
                 default:
@@ -84,6 +97,8 @@ public class RecordWorkoutActivity extends AppCompatActivity
         registerReceiver(receiver, intentFilterStep);
         registerReceiver(receiver, intentFilterLocation);
         registerReceiver(receiver, intentFilterNewWorkout);
+
+        // TODO: make timer resume if service is running
     }
 
     @Override
@@ -96,7 +111,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
 
     interface onNewLocationListener
     {
-        void onNewLocation(ArrayList<LatLng> locationsToDraw);
+        void onNewLocation(ArrayList<LatLng> locationsToDraw, double distance);
     }
 
     /**

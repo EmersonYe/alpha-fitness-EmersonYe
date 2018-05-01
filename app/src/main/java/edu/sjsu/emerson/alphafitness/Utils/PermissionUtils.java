@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.sjsu.emerson.alphafitness;
+package edu.sjsu.emerson.alphafitness.Utils;
 
         import android.Manifest;
         import android.app.AlertDialog;
@@ -26,6 +26,8 @@ package edu.sjsu.emerson.alphafitness;
         import android.support.v4.app.DialogFragment;
         import android.support.v7.app.AppCompatActivity;
         import android.widget.Toast;
+
+        import edu.sjsu.emerson.alphafitness.R;
 
 /**
  * Utility class for access to runtime permissions.
