@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +17,7 @@ import java.util.ArrayList;
 
 import edu.sjsu.emerson.alphafitness.Utils.LocationUtils;
 
+import static edu.sjsu.emerson.alphafitness.RecordWorkoutPortraitFragment.BROADCAST_STOP_WORKOUT;
 import static edu.sjsu.emerson.alphafitness.WorkoutTrackerService.BROADCAST_LOCATION_CHANGE;
 import static edu.sjsu.emerson.alphafitness.WorkoutTrackerService.BROADCAST_STEP_COUNTER;
 import static edu.sjsu.emerson.alphafitness.WorkoutTrackerService.LATITUDE;
@@ -80,6 +80,9 @@ public class RecordWorkoutActivity extends AppCompatActivity
                     distance = 0;
                     Log.i(TAG, "locationsToDraw cleared");
                     break;
+                case BROADCAST_STOP_WORKOUT:
+                    //save shit
+                    break;
                 default:
                     break;
             }
@@ -93,10 +96,12 @@ public class RecordWorkoutActivity extends AppCompatActivity
         IntentFilter intentFilterStep = new IntentFilter(BROADCAST_STEP_COUNTER);
         IntentFilter intentFilterLocation = new IntentFilter(BROADCAST_LOCATION_CHANGE);
         IntentFilter intentFilterNewWorkout = new IntentFilter(BROADCAST_NEW_WORKOUT);
+        IntentFilter intentFilterStopWorkout = new IntentFilter(BROADCAST_STOP_WORKOUT);
 
         registerReceiver(receiver, intentFilterStep);
         registerReceiver(receiver, intentFilterLocation);
         registerReceiver(receiver, intentFilterNewWorkout);
+        registerReceiver(receiver, intentFilterStopWorkout);
 
         // TODO: make timer resume if service is running
     }

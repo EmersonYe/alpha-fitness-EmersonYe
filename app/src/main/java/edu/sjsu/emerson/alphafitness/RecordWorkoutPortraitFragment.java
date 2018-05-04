@@ -27,6 +27,7 @@ import java.util.ArrayList;
 public class RecordWorkoutPortraitFragment extends Fragment implements RecordWorkoutActivity.onNewLocationListener
 {
     public static final String BROADCAST_NEW_WORKOUT = "BroadcastNewWorkout";
+    public static final String BROADCAST_STOP_WORKOUT = "BroadcastStopWorkout";
 
     private static final String TAG = "PortraitFragment";
     MapView mMapView;
@@ -62,6 +63,7 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
                     Log.i(TAG, "Workout started");
                 } else {
                     getActivity().stopService(intent);
+                    Intent broadcastIntent = new Intent(BROADCAST_STOP_WORKOUT);
                     // Stop mChronometer
                     mChronometer.stop();
                     toggleWorkoutButton.setText(R.string.start_workout);
