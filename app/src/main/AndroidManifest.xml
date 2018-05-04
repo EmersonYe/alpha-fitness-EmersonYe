@@ -47,10 +47,10 @@
             android:process=":anotherProcess" />
 
         <provider
-            android:name=".LocationContentProvider"
-            android:authorities="edu.sjsu.emerson.alphafitness.provider"
+            android:name=".database.MyContentProvider"
+            android:authorities="edu.sjsu.myprovider"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"></provider>
     </application>
 
 </manifest>

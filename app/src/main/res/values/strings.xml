@@ -9,7 +9,6 @@
     <string name="distance_zero_value">0.0</string>
     <string name="duration">Duration</string>
     <string name="imperial_distance_unit">Miles</string>
-    <string name="time_zero_value">0:00:00</string>
     <string name="time_units">Min/Sec</string>
 
 
