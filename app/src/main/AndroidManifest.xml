@@ -50,7 +50,9 @@
             android:name=".database.MyContentProvider"
             android:authorities="edu.sjsu.myprovider"
             android:enabled="true"
-            android:exported="true"></provider>
+            android:exported="true" />
+
+        <activity android:name=".ProfileFragment"></activity>
     </application>
 
 </manifest>

@@ -2,6 +2,7 @@ package edu.sjsu.emerson.alphafitness;
 
 import android.app.ActivityManager;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -85,6 +86,12 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
             @Override
             public void onClick(View view)
             {
+                Fragment profileFragment = new ProfileFragment();
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.add(R.id.test, profileFragment);
+
+                fragmentTransaction.commit();
+                /* test read from mysqlite. works! :)
                 Cursor c = getActivity().getContentResolver().query(MyContentProvider.URI, null, null, null, "date");
                 if (c.moveToFirst()) {
                     do {
@@ -105,6 +112,7 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
 
                     } while (c.moveToNext());
                 }
+                */
             }
         });
 

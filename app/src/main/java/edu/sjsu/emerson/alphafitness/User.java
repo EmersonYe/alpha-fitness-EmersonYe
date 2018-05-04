@@ -9,7 +9,6 @@ public class User
     private static User userInstance = null;
     private String name;
     private String gender;
-    private String pictureUrl;
     private float weight;
     private float height;
 
@@ -17,7 +16,6 @@ public class User
     {
         name = "Jon Doe";
         gender = "Male";
-        pictureUrl = "http://themes.themewaves.com/nuzi/wp-content/uploads/sites/4/2013/05/Team-Member-3.jpg";
         weight = 150;
         height = 205;
     }
@@ -40,16 +38,6 @@ public class User
     public void setGender(String gender)
     {
         this.gender = gender;
-    }
-
-    public String getPictureUrl()
-    {
-        return pictureUrl;
-    }
-
-    public void setPictureUrl(String pictureUrl)
-    {
-        this.pictureUrl = pictureUrl;
     }
 
     public float getWeight()
