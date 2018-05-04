@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -12,7 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -23,6 +26,9 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+
+import edu.sjsu.emerson.alphafitness.database.MyContentProvider;
+import edu.sjsu.emerson.alphafitness.database.workoutDbHelper;
 
 public class RecordWorkoutPortraitFragment extends Fragment implements RecordWorkoutActivity.onNewLocationListener
 {
@@ -64,10 +70,40 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
                 } else {
                     getActivity().stopService(intent);
                     Intent broadcastIntent = new Intent(BROADCAST_STOP_WORKOUT);
+                    getActivity().sendBroadcast(broadcastIntent);
                     // Stop mChronometer
                     mChronometer.stop();
                     toggleWorkoutButton.setText(R.string.start_workout);
                     Log.i(TAG, "Workout stopped");
+                }
+            }
+        });
+
+        final ImageButton profileButton = rootView.findViewById(R.id.profile_button);
+        profileButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Cursor c = getActivity().getContentResolver().query(MyContentProvider.URI, null, null, null, "date");
+                if (c.moveToFirst()) {
+                    do {
+                        Toast.makeText(getActivity(), c.getString(c.getColumnIndex(MyContentProvider._ID))
+                                + ", "
+                                + c.getString(
+                                c.getColumnIndex(workoutDbHelper.DATE))
+                                + ", "
+                                + c.getString(
+                                c.getColumnIndex(workoutDbHelper.DISTANCE))
+                                + ", "
+                                + c.getString(
+                                c.getColumnIndex(workoutDbHelper.DURATION))
+                                + ","
+                                + c.getString(
+                                c.getColumnIndex(workoutDbHelper.STEPS)), Toast.LENGTH_SHORT
+                        ).show();
+
+                    } while (c.moveToNext());
                 }
             }
         });

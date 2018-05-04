@@ -2,9 +2,11 @@ package edu.sjsu.emerson.alphafitness;
 
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +18,8 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 
 import edu.sjsu.emerson.alphafitness.Utils.LocationUtils;
+import edu.sjsu.emerson.alphafitness.database.MyContentProvider;
+import edu.sjsu.emerson.alphafitness.database.workoutDbHelper;
 
 import static edu.sjsu.emerson.alphafitness.RecordWorkoutPortraitFragment.BROADCAST_STOP_WORKOUT;
 import static edu.sjsu.emerson.alphafitness.WorkoutTrackerService.BROADCAST_LOCATION_CHANGE;
@@ -81,7 +85,13 @@ public class RecordWorkoutActivity extends AppCompatActivity
                     Log.i(TAG, "locationsToDraw cleared");
                     break;
                 case BROADCAST_STOP_WORKOUT:
-                    //save shit
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(workoutDbHelper.DATE, 2018);
+                    contentValues.put(workoutDbHelper.DISTANCE, 15);
+                    contentValues.put(workoutDbHelper.DURATION, 150);
+                    contentValues.put(workoutDbHelper.STEPS, 999);
+                    Uri uri = getContentResolver().insert(MyContentProvider.URI, contentValues);
+                    Toast.makeText(RecordWorkoutActivity.this,uri.toString(),Toast.LENGTH_LONG).show();
                     break;
                 default:
                     break;

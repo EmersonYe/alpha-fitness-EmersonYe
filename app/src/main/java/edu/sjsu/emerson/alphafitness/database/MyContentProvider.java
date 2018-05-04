@@ -22,10 +22,10 @@ public class MyContentProvider extends ContentProvider
 {
     static final String PROVIDER = "edu.sjsu.myprovider";
     static final String URL = "content://" + PROVIDER + "/" + WORKOUTS_TABLE_NAME;
-    static final Uri URI = Uri.parse(URL);
+    public static final Uri URI = Uri.parse(URL);
 
     private static final String TAG = "MyContentProvider";
-    private static final String _ID = "_id";
+    public static final String _ID = "_id";
 
     static final int WORKOUTS = 1;
     static final int WORKOUT_ID = 2;
