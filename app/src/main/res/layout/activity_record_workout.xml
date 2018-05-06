@@ -1,6 +1,11 @@
-<fragment
-    android:id="@+id/portraitFragment"
-    android:layout_height="match_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/portraitFrame"
     android:layout_width="match_parent"
-    class="edu.sjsu.emerson.alphafitness.RecordWorkoutPortraitFragment"
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+    android:layout_height="match_parent">
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/portraitFragment"
+        class="edu.sjsu.emerson.alphafitness.RecordWorkoutPortraitFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</FrameLayout>

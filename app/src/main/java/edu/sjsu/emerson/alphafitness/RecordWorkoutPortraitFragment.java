@@ -88,7 +88,8 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
             {
                 Fragment profileFragment = new ProfileFragment();
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.add(R.id.test, profileFragment);
+                fragmentTransaction.add(R.id.portraitFrame, profileFragment);
+                fragmentTransaction.addToBackStack(null);
 
                 fragmentTransaction.commit();
                 /* test read from mysqlite. works! :)

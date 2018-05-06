@@ -16,7 +16,7 @@ public class User
     {
         name = "Jon Doe";
         gender = "Male";
-        weight = 150;
+        weight = 950;
         height = 205;
     }
 
