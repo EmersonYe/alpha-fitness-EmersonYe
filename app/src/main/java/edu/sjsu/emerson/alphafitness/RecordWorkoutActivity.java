@@ -55,7 +55,8 @@ public class RecordWorkoutActivity extends AppCompatActivity
         steps = new ArrayList<>();
         totalSteps = 0;
         // test value
-        steps.add(500);
+        steps.add(1500);
+        totalSteps = 1500;
     }
 
 
@@ -128,6 +129,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
                 // execute ever 5 seconds
                 // test data
                 steps.add(steps.get(steps.size() - 1) * 2);
+                totalSteps += steps.get(steps.size() - 1);
                 try {
                     mNewStepCounterData.onNewStepData(steps, delay, totalSteps);
                 } catch (NullPointerException e) {

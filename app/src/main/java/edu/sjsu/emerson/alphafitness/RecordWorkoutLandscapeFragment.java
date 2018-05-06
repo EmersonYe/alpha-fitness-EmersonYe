@@ -57,20 +57,26 @@ public class RecordWorkoutLandscapeFragment extends Fragment implements RecordWo
         int updateIntervalSec = updateInterval / 1000;
         System.out.println("updateIntervalSec: " + updateIntervalSec);
         double totalDistanceKm = stepsToKm(totalSteps);
-        System.out.println("totalDistanceKm : " +totalDistanceKm  );
-        int totalSec = steps.size() * updateIntervalSec;
-        System.out.println("totalSec : " +totalSec  );
+        long minutes = 0;
+        int seconds = 0;
+        if (totalDistanceKm != 0) {
+            System.out.println("totalDistanceKm : " + totalDistanceKm);
+            int totalSec = steps.size() * updateIntervalSec;
+            System.out.println("totalSec : " + totalSec);
 
-        double minPerKm = (totalSec / 60) / totalDistanceKm;
-        System.out.println("minPerKm : " +minPerKm );
-        long minutes = (long) ((minPerKm / 1000) / 60);
-        System.out.println("minutes : " +minutes);
-        int seconds = (int) ((minPerKm / 1000) % 60);
-        System.out.println("seconds : " +seconds);
+            // TODO: keep min as sec to preserve accuracy
+            double minPerKm = (totalSec / 60) / totalDistanceKm;
+            System.out.println("minPerKm : " + minPerKm);
+            minutes = (long) ((minPerKm / 1000) / 60);
+            System.out.println("minutes : " + minutes);
+            seconds = (int) ((minPerKm / 1000) % 60);
+            System.out.println("seconds : " + seconds);
+        }
 
         String formattedMinPerKM = String.format("Avg %d:%d min/km", minutes, seconds);
         averageSpeedText.setText(formattedMinPerKM);
 
+        /*
         int maxStepsPerInterval = Collections.max(steps);
         // Log.e(TAG, "Max: " + maxStepsPerInterval);
         double maxMinPerKm = (updateIntervalSec / 60) / stepsToKm(maxStepsPerInterval);
@@ -86,6 +92,7 @@ public class RecordWorkoutLandscapeFragment extends Fragment implements RecordWo
         seconds = (int) ((minMinPerKm / 1000) % 60);
         String formattedMinMinPerKM = String.format("Min %d:%d min/km", minutes, seconds);
         minSpeedText.setText(formattedMinMinPerKM);
+        */
 
         drawChart(steps, updateInterval);
     }
