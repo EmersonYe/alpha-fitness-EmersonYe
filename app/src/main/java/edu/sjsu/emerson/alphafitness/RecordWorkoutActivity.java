@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.sjsu.emerson.alphafitness.Utils.LocationUtils;
 import edu.sjsu.emerson.alphafitness.database.MyContentProvider;
@@ -31,29 +33,29 @@ import static edu.sjsu.emerson.alphafitness.RecordWorkoutPortraitFragment.BROADC
 public class RecordWorkoutActivity extends AppCompatActivity
 {
     private static final String TAG = "RecordWorkoutActivity";
-    onNewLocationListener mListener;
+    private static final int delay = 5000; // milliseconds
+    onNewLocationListener mLocationListener;
+    onNewStepCounterData mNewStepCounterData;
     private static ArrayList<LatLng> locationsToDraw = new ArrayList<>();
     private double distance;
 
-    // test values
-    private static final LatLng ADELAIDE = new LatLng(-34.92873, 138.59995);
-    private static final LatLng DARWIN = new LatLng(-12.4258647, 130.7932231);
-    private static final LatLng MELBOURNE = new LatLng(-37.81319, 144.96298);
-    private static final LatLng PERTH = new LatLng(-31.95285, 115.85734);
+    private static List<Integer> steps;
+    private int totalSteps;
+    // To execute action every 5 seconds
+    Handler handler = new Handler();
+    Runnable runnable;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_workout);
-
-        /* add test values to locations to draw
-        locationsToDraw.add(ADELAIDE);
-        locationsToDraw.add(DARWIN);
-        locationsToDraw.add(MELBOURNE);
-        locationsToDraw.add(PERTH);
-        */
+        steps = new ArrayList<>();
+        totalSteps = 0;
+        // test value
+        steps.add(5);
     }
+
 
     private BroadcastReceiver receiver = new BroadcastReceiver()
     {
@@ -69,12 +71,16 @@ public class RecordWorkoutActivity extends AppCompatActivity
                     // Calculate distance from last to new location
                     double newDistance = 0;
                     if (!locationsToDraw.isEmpty()) {
-                        LatLng lastLocation = locationsToDraw.get(locationsToDraw.size()-1);
-                        newDistance = LocationUtils.distanceBetween(lastLocation,newLocation);
+                        LatLng lastLocation = locationsToDraw.get(locationsToDraw.size() - 1);
+                        newDistance = LocationUtils.distanceBetween(lastLocation, newLocation);
                     }
                     distance += newDistance;
                     locationsToDraw.add(newLocation);
-                    mListener.onNewLocation(locationsToDraw, distance);
+                    try {
+                        mLocationListener.onNewLocation(locationsToDraw, distance);
+                    } catch (NullPointerException e) {
+                        Log.w(TAG, "no fragments listening to location updates");
+                    }
                     break;
                 case BROADCAST_STEP_COUNTER:
                     Toast.makeText(RecordWorkoutActivity.this, "Received step update", Toast.LENGTH_LONG).show();
@@ -91,7 +97,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
                     contentValues.put(workoutDbHelper.DURATION, 150);
                     contentValues.put(workoutDbHelper.STEPS, 999);
                     Uri uri = getContentResolver().insert(MyContentProvider.URI, contentValues);
-                    Toast.makeText(RecordWorkoutActivity.this,uri.toString(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(RecordWorkoutActivity.this, uri.toString(), Toast.LENGTH_LONG).show();
                     break;
                 default:
                     break;
@@ -102,7 +108,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
     @Override
     protected void onResume()
     {
-        super.onResume();
+        // TODO: make timer resume if service is running
         IntentFilter intentFilterStep = new IntentFilter(BROADCAST_STEP_COUNTER);
         IntentFilter intentFilterLocation = new IntentFilter(BROADCAST_LOCATION_CHANGE);
         IntentFilter intentFilterNewWorkout = new IntentFilter(BROADCAST_NEW_WORKOUT);
@@ -113,7 +119,36 @@ public class RecordWorkoutActivity extends AppCompatActivity
         registerReceiver(receiver, intentFilterNewWorkout);
         registerReceiver(receiver, intentFilterStopWorkout);
 
-        // TODO: make timer resume if service is running
+        handler.postDelayed(new Runnable()
+        {
+            public void run()
+            {
+                // execute ever 5 seconds
+                // test data
+                steps.add(steps.get(steps.size() - 1) * 2);
+                try {
+                    mNewStepCounterData.onNewStepData(steps, delay, totalSteps);
+                } catch (NullPointerException e) {
+                    Log.w(TAG, "no fragments listening to step updates");
+                }
+
+                runnable = this;
+
+                handler.postDelayed(runnable, delay);
+            }
+        }, delay);
+
+        super.onResume();
+    }
+
+    /**
+     * Dispatch onPause() to fragments.
+     */
+    @Override
+    protected void onPause()
+    {
+        handler.removeCallbacks(runnable);
+        super.onPause();
     }
 
     @Override
@@ -127,6 +162,11 @@ public class RecordWorkoutActivity extends AppCompatActivity
     interface onNewLocationListener
     {
         void onNewLocation(ArrayList<LatLng> locationsToDraw, double distance);
+    }
+
+    interface onNewStepCounterData
+    {
+        void onNewStepData(List<Integer> steps, int updateInterval, int totalSteps);
     }
 
     /**
@@ -143,8 +183,12 @@ public class RecordWorkoutActivity extends AppCompatActivity
     {
         super.onAttachFragment(fragment);
         if (fragment instanceof onNewLocationListener) {
-            mListener = (onNewLocationListener) fragment;
+            mLocationListener = (onNewLocationListener) fragment;
             Log.e(TAG, "Fragment attached and listening for new locations ");
+        }
+        if (fragment instanceof onNewStepCounterData) {
+            mNewStepCounterData = (onNewStepCounterData) fragment;
+            Log.e(TAG, "Fragment attached and listening for steps ");
         }
     }
 

@@ -17,7 +17,6 @@ public class User
         name = "Jon Doe";
         gender = "Male";
         weight = 950;
-        height = 205;
     }
 
     public String getName()
