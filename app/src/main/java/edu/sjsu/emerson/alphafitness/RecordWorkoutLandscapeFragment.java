@@ -4,17 +4,20 @@ import android.app.Fragment;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -24,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RecordWorkoutLandscapeFragment extends Fragment implements RecordWorkoutActivity.onNewStepCounterData
 {
+    private static final String TAG = "DetailsFragment";
     User mUser;
     TextView averageSpeedText, maxSpeedText, minSpeedText;
     LineChart lineChart;
@@ -50,15 +54,38 @@ public class RecordWorkoutLandscapeFragment extends Fragment implements RecordWo
     @Override
     public void onNewStepData(List<Integer> steps, int updateInterval, int totalSteps)
     {
+        int updateIntervalSec = updateInterval / 1000;
+        System.out.println("updateIntervalSec: " + updateIntervalSec);
         double totalDistanceKm = stepsToKm(totalSteps);
-        int totalMs = steps.size() * updateInterval;
-        int msPerKm = (int) (totalMs / totalDistanceKm);
-        long minutes = (msPerKm / 1000) / 60;
-        int seconds = (msPerKm / 1000) % 60;
+        System.out.println("totalDistanceKm : " +totalDistanceKm  );
+        int totalSec = steps.size() * updateIntervalSec;
+        System.out.println("totalSec : " +totalSec  );
 
-        String formattedKmRate = String.format("Avg %d:%d min/km", minutes, seconds);
-        averageSpeedText.setText(formattedKmRate);
+        double minPerKm = (totalSec / 60) / totalDistanceKm;
+        System.out.println("minPerKm : " +minPerKm );
+        long minutes = (long) ((minPerKm / 1000) / 60);
+        System.out.println("minutes : " +minutes);
+        int seconds = (int) ((minPerKm / 1000) % 60);
+        System.out.println("seconds : " +seconds);
 
+        String formattedMinPerKM = String.format("Avg %d:%d min/km", minutes, seconds);
+        averageSpeedText.setText(formattedMinPerKM);
+
+        int maxStepsPerInterval = Collections.max(steps);
+        // Log.e(TAG, "Max: " + maxStepsPerInterval);
+        double maxMinPerKm = (updateIntervalSec / 60) / stepsToKm(maxStepsPerInterval);
+        minutes = (long) ((maxMinPerKm / 1000) / 60);
+        seconds = (int) ((maxMinPerKm / 1000) % 60);
+        String formattedMaxMinPerKM = String.format("Max %d:%d min/km", minutes, seconds);
+        maxSpeedText.setText(formattedMaxMinPerKM);
+
+
+        int minStepsPerInterval = Collections.min(steps);
+        double minMinPerKm = (updateIntervalSec / 60) / stepsToKm(minStepsPerInterval);
+        minutes = (long) ((minMinPerKm / 1000) / 60);
+        seconds = (int) ((minMinPerKm / 1000) % 60);
+        String formattedMinMinPerKM = String.format("Min %d:%d min/km", minutes, seconds);
+        minSpeedText.setText(formattedMinMinPerKM);
 
         drawChart(steps, updateInterval);
     }
@@ -76,14 +103,18 @@ public class RecordWorkoutLandscapeFragment extends Fragment implements RecordWo
         // dataSet.setValueTextColor(...); // styling, ...
         LineData lineData = new LineData(dataSet);
         lineChart.setData(lineData);
-        // TODO: add x axis label
+
+        Description description = new Description();
+        String formattedDescription = String.format("Steps per %d minutes and calories burnt over time", updateInterval / 1000);
+        description.setText(formattedDescription);
+        lineChart.setDescription(description);
         lineChart.invalidate();
     }
 
     private double stepsToKm(int steps)
     {
         double strideLengthCm = (mUser.getGender().equals("Female")) ? 134 : 152;
-        return steps * strideLengthCm * 100000;
+        return steps * strideLengthCm / 100000;
     }
 
 }

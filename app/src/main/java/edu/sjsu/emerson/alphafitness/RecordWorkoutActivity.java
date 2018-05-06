@@ -36,9 +36,11 @@ public class RecordWorkoutActivity extends AppCompatActivity
     private static final int delay = 5000; // milliseconds
     onNewLocationListener mLocationListener;
     onNewStepCounterData mNewStepCounterData;
+    // Model for drawing Record Workout
     private static ArrayList<LatLng> locationsToDraw = new ArrayList<>();
     private double distance;
 
+    // Data for drawing Details
     private static List<Integer> steps;
     private int totalSteps;
     // To execute action every 5 seconds
@@ -53,7 +55,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
         steps = new ArrayList<>();
         totalSteps = 0;
         // test value
-        steps.add(5);
+        steps.add(500);
     }
 
 
