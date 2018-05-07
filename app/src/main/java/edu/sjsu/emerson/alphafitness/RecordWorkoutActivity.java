@@ -99,9 +99,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
                 } catch (NullPointerException e) {
                     Log.w(TAG, "no fragments listening to step updates");
                 }
-
                 runnable = this;
-
                 handler.postDelayed(runnable, delay);
             }
         }, delay);
@@ -143,13 +141,15 @@ public class RecordWorkoutActivity extends AppCompatActivity
             Log.d(TAG, "Intent received. Action: " + intent.getAction());
             switch (intent.getAction()) {
                 case BROADCAST_LOCATION_CHANGE:
-                    double latitude = intent.getDoubleExtra(LATITUDE, 0);
-                    double longitude = intent.getDoubleExtra(LONGITUDE, 0);
+                    double latitude = intent.getExtras().getDouble(LATITUDE);
+                    double longitude = intent.getExtras().getDouble(LONGITUDE);
                     LatLng newLocation = new LatLng(latitude, longitude);
                     // Calculate distance from last to new location
                     double newDistance = 0;
                     if (!locationsToDraw.isEmpty()) {
                         LatLng lastLocation = locationsToDraw.get(locationsToDraw.size() - 1);
+                        //Log.e(TAG, lastLocation.latitude + " , " + lastLocation.longitude);
+                        Log.e(TAG, locationsToDraw.toString());
                         newDistance = LocationUtils.distanceBetween(lastLocation, newLocation);
                     }
                     distance += newDistance;
@@ -213,9 +213,11 @@ public class RecordWorkoutActivity extends AppCompatActivity
 
             // Wait 1 second for map to load, then update map with existing data
             Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    mLocationListener.onNewLocation(locationsToDraw,distance);
+            handler.postDelayed(new Runnable()
+            {
+                public void run()
+                {
+                    mLocationListener.onNewLocation(locationsToDraw, distance);
                 }
             }, 1000);   //1 seconds
 

@@ -162,6 +162,12 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onDestroy()
     {
         super.onDestroy();
@@ -185,7 +191,7 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
         if (mPolyline != null)
             mPolyline.remove();
         mPolyline = googleMap.addPolyline(new PolylineOptions().addAll(locationsToDraw));
-        String formattedDistance = String.format("%.1f", distance);
+        String formattedDistance = String.format("%.2f", distance);
         mDistanceText.setText(formattedDistance);
     }
 
