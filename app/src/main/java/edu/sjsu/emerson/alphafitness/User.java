@@ -10,7 +10,6 @@ public class User
     private String name;
     private String gender;
     private float weight;
-    private float height;
 
     public User()
     {
@@ -47,16 +46,6 @@ public class User
     public void setWeight(float weight)
     {
         this.weight = weight;
-    }
-
-    public float getHeight()
-    {
-        return height;
-    }
-
-    public void setHeight(float height)
-    {
-        this.height = height;
     }
 
     public static User getInstance(){
