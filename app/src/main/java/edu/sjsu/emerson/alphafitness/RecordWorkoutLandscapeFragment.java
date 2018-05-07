@@ -55,51 +55,54 @@ public class RecordWorkoutLandscapeFragment extends Fragment implements RecordWo
     public void onNewStepData(List<Integer> steps, int updateInterval, int totalSteps)
     {
         int updateIntervalSec = updateInterval / 1000;
-        System.out.println("updateIntervalSec: " + updateIntervalSec);
-        double totalDistanceKm = stepsToKm(totalSteps);
         long minutes = 0;
         int seconds = 0;
+
+        // Average speed
+        double totalDistanceKm = stepsToKm(totalSteps);
         if (totalDistanceKm != 0) {
-            System.out.println("totalDistanceKm : " + totalDistanceKm);
             int totalSec = steps.size() * updateIntervalSec;
-            System.out.println("totalSec : " + totalSec);
-
-            // TODO: keep min as sec to preserve accuracy
-            double minPerKm = (totalSec / 60) / totalDistanceKm;
-            System.out.println("minPerKm : " + minPerKm);
-            minutes = (long) ((minPerKm / 1000) / 60);
-            System.out.println("minutes : " + minutes);
-            seconds = (int) ((minPerKm / 1000) % 60);
-            System.out.println("seconds : " + seconds);
+            double secPerKm = totalSec / totalDistanceKm;
+            minutes = (long) (secPerKm / 60);
+            seconds = (int) (secPerKm % 60);
         }
-
-        String formattedMinPerKM = String.format("Avg %d:%d min/km", minutes, seconds);
+        String formattedMinPerKM = String.format("Avg %d:%02d min/km", minutes, seconds);
         averageSpeedText.setText(formattedMinPerKM);
 
-        /*
+        // Max speed
         int maxStepsPerInterval = Collections.max(steps);
-        // Log.e(TAG, "Max: " + maxStepsPerInterval);
-        double maxMinPerKm = (updateIntervalSec / 60) / stepsToKm(maxStepsPerInterval);
-        minutes = (long) ((maxMinPerKm / 1000) / 60);
-        seconds = (int) ((maxMinPerKm / 1000) % 60);
-        String formattedMaxMinPerKM = String.format("Max %d:%d min/km", minutes, seconds);
+        double maxKm = stepsToKm(maxStepsPerInterval);
+        if(maxKm != 0) {
+            double maxSecPerKm = updateIntervalSec / maxKm;
+            minutes = (long) (maxSecPerKm / 60);
+            seconds = (int) (maxSecPerKm % 60);
+        } else {
+            minutes = 0;
+            seconds = 0;
+        }
+        String formattedMaxMinPerKM = String.format("Max %d:%02d min/km", minutes, seconds);
         maxSpeedText.setText(formattedMaxMinPerKM);
 
-
+        // Min speed
         int minStepsPerInterval = Collections.min(steps);
-        double minMinPerKm = (updateIntervalSec / 60) / stepsToKm(minStepsPerInterval);
-        minutes = (long) ((minMinPerKm / 1000) / 60);
-        seconds = (int) ((minMinPerKm / 1000) % 60);
-        String formattedMinMinPerKM = String.format("Min %d:%d min/km", minutes, seconds);
+        double minKm = stepsToKm(minStepsPerInterval);
+        if (minKm != 0) {
+            double minSecPerKm = updateIntervalSec / minKm;
+            minutes = (long) (minSecPerKm / 60);
+            seconds = (int) (minSecPerKm % 60);
+        } else {
+            minutes = 0;
+            seconds = 0;
+        }
+        String formattedMinMinPerKM = String.format("Min %d:%02d min/km", minutes, seconds);
         minSpeedText.setText(formattedMinMinPerKM);
-        */
 
         drawChart(steps, updateInterval);
     }
 
     private void drawChart(List<Integer> steps, int updateInterval)
     {
-        List<Entry> entries = new ArrayList<Entry>();
+        List<Entry> entries = new ArrayList<>();
         for (int i = 0; i < steps.size(); i++) {
             int data = steps.get(i);
             // turn your data into Entry objects

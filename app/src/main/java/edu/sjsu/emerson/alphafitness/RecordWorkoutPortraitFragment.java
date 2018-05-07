@@ -50,6 +50,10 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
         mChronometer = rootView.findViewById(R.id.chronometer);
         mDistanceText = rootView.findViewById(R.id.text_distance);
         final Button toggleWorkoutButton = rootView.findViewById(R.id.button_start);
+        if (isServiceRunning(WorkoutTrackerService.class))
+            toggleWorkoutButton.setText(R.string.stop_workout);
+        else
+            toggleWorkoutButton.setText(R.string.start_workout);
 
         toggleWorkoutButton.setOnClickListener(new View.OnClickListener()
         {
