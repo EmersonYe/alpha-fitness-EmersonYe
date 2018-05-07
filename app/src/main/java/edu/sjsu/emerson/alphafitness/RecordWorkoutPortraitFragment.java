@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
@@ -177,6 +178,10 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
     @Override
     public void onNewLocation(ArrayList<LatLng> locationsToDraw, double distance)
     {
+        // center camera on last location
+        if (!locationsToDraw.isEmpty())
+            googleMap.animateCamera(CameraUpdateFactory.newLatLng(locationsToDraw.get(locationsToDraw.size() - 1)));
+
         if (mPolyline != null)
             mPolyline.remove();
         mPolyline = googleMap.addPolyline(new PolylineOptions().addAll(locationsToDraw));

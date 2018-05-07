@@ -75,6 +75,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
     @Override
     protected void onResume()
     {
+        super.onResume();
         // TODO: make timer resume if service is running
         IntentFilter intentFilterStep = new IntentFilter(BROADCAST_STEP_COUNTER);
         IntentFilter intentFilterLocation = new IntentFilter(BROADCAST_LOCATION_CHANGE);
@@ -105,8 +106,6 @@ public class RecordWorkoutActivity extends AppCompatActivity
                 handler.postDelayed(runnable, delay);
             }
         }, delay);
-
-        super.onResume();
     }
 
     /**
@@ -127,6 +126,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
         outState.putParcelableArrayList(LOCATION_ARRAY, locationsToDraw);
         outState.putIntegerArrayList(STEP_ARRAY, steps);
         outState.putInt(TOTAL_STEPS, totalSteps);
+
     }
 
     @Override
@@ -217,7 +217,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
                 public void run() {
                     mLocationListener.onNewLocation(locationsToDraw,distance);
                 }
-            }, 1000);   //5 seconds
+            }, 1000);   //1 seconds
 
             Log.e(TAG, "Fragment attached and listening for new locations ");
         }
