@@ -23,6 +23,7 @@ import edu.sjsu.emerson.alphafitness.database.MyContentProvider;
 import edu.sjsu.emerson.alphafitness.database.workoutDbHelper;
 
 import static edu.sjsu.emerson.alphafitness.RecordWorkoutPortraitFragment.BROADCAST_STOP_WORKOUT;
+import static edu.sjsu.emerson.alphafitness.RecordWorkoutPortraitFragment.DURATION_SECONDS;
 import static edu.sjsu.emerson.alphafitness.WorkoutTrackerService.BROADCAST_LOCATION_CHANGE;
 import static edu.sjsu.emerson.alphafitness.WorkoutTrackerService.BROADCAST_STEP_COUNTER;
 import static edu.sjsu.emerson.alphafitness.WorkoutTrackerService.LATITUDE;
@@ -171,9 +172,9 @@ public class RecordWorkoutActivity extends AppCompatActivity
                 case BROADCAST_STOP_WORKOUT:
                     ContentValues contentValues = new ContentValues();
                     contentValues.put(workoutDbHelper.DATE, 2018);
-                    contentValues.put(workoutDbHelper.DISTANCE, 15);
-                    contentValues.put(workoutDbHelper.DURATION, 150);
-                    contentValues.put(workoutDbHelper.STEPS, 999);
+                    contentValues.put(workoutDbHelper.DISTANCE, distance);
+                    contentValues.put(workoutDbHelper.DURATION, intent.getExtras().getInt(DURATION_SECONDS));
+                    contentValues.put(workoutDbHelper.STEPS, totalSteps);
                     Uri uri = getContentResolver().insert(MyContentProvider.URI, contentValues);
                     Toast.makeText(RecordWorkoutActivity.this, uri.toString(), Toast.LENGTH_LONG).show();
                     break;

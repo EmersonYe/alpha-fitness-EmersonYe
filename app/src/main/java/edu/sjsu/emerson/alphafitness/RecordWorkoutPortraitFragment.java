@@ -39,6 +39,7 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
 
     private static final String TAG = "PortraitFragment";
     private static final String CHRONOMETER_BASE = "chronometerBase";
+    public static final String DURATION_SECONDS = "durationSeconds";
     MapView mMapView;
     private GoogleMap googleMap;
     private Polyline mPolyline;
@@ -79,6 +80,7 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
                 } else {
                     getActivity().stopService(intent);
                     Intent broadcastIntent = new Intent(BROADCAST_STOP_WORKOUT);
+                    broadcastIntent.putExtra(DURATION_SECONDS,(int)(SystemClock.elapsedRealtime() - mChronometer.getBase()));
                     getActivity().sendBroadcast(broadcastIntent);
                     // Stop mChronometer
                     mChronometer.stop();

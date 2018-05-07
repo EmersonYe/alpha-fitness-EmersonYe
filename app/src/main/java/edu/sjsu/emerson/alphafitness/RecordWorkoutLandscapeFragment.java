@@ -13,6 +13,7 @@ import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -118,6 +119,7 @@ public class RecordWorkoutLandscapeFragment extends Fragment implements RecordWo
 
     private void drawChart(ArrayList<Integer> steps, int updateInterval)
     {
+        ArrayList<ILineDataSet> lines = new ArrayList<>();
         // Steps over time
         List<Entry> entries = new ArrayList<>();
         for (int i = 0; i < steps.size(); i++) {
@@ -132,6 +134,18 @@ public class RecordWorkoutLandscapeFragment extends Fragment implements RecordWo
         lineChart.setData(lineData);
 
         // Calories over time
+        List<Entry> entries1 = new ArrayList<>();
+        for (int i = 0; i < steps.size(); i++) {
+            int data = steps.get(i)/20;
+            // turn your data into Entry objects
+            entries1.add(new Entry(i, data));
+        }
+        LineDataSet dataSet1 = new LineDataSet(entries1, "Calories"); // add entries to dataset
+
+        lines.add(dataSet);
+        lines.add(dataSet1);
+        LineData data = new LineData(lines);
+        lineChart.setData(data);
         Description description = new Description();
         String formattedDescription = String.format("Steps per %d minutes and calories burnt over time", updateInterval / 1000);
         description.setText(formattedDescription);

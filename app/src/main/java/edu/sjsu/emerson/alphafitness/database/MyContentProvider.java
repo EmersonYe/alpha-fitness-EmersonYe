@@ -80,6 +80,7 @@ public class MyContentProvider extends ContentProvider
     {
         Log.d(TAG, "content provider: insert()");
 
+        values.put(workoutDbHelper.DATE, "DATETIME('NOW')");
         long row = db.insert(WORKOUTS_TABLE_NAME, "", values);
 
         if (row > 0) {
