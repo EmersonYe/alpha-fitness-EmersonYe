@@ -21,7 +21,7 @@ public class ProfileFragment extends Fragment implements RecordWorkoutActivity.o
     private static final String TAG = "profileFragment";
     private User mUser;
     private EditText nameField, genderField, weightField;
-    private TextView weeklyDistanceText, weeklyTimeField, weeklyWorkoutsField, weeklyCalories, allDistanceField, allTimeField, allWorkoutsField, allCalories;
+    private TextView weeklyDistanceText, weeklyTimeText, weeklyWorkoutsText, weeklyCaloriesText, allDistanceText, allTimeText, allWorkoutsText, allCaloriesText;
     private Button updateButton;
 
     @Override
@@ -40,7 +40,16 @@ public class ProfileFragment extends Fragment implements RecordWorkoutActivity.o
         nameField = v.findViewById(R.id.nameField);
         genderField = v.findViewById(R.id.genderField);
         weightField = v.findViewById(R.id.weightField);
-        allWorkoutsField = v.findViewById(R.id.all_workouts);
+
+        weeklyDistanceText = v.findViewById(R.id.weekly_distance);
+        weeklyTimeText = v.findViewById(R.id.weekly_time);
+        weeklyWorkoutsText = v.findViewById(R.id.weekly_workouts);
+        weeklyCaloriesText = v.findViewById(R.id.weekly_calories);
+        allDistanceText = v.findViewById(R.id.all_distance);
+        allTimeText = v.findViewById((R.id.all_time));
+        allWorkoutsText = v.findViewById(R.id.all_workouts);
+        allCaloriesText = v.findViewById(R.id.all_calories);
+
         updateButton = v.findViewById(R.id.updateButton);
 
         updateIdentityFields();
@@ -89,15 +98,15 @@ public class ProfileFragment extends Fragment implements RecordWorkoutActivity.o
                 totalDuration += c.getColumnIndex(workoutDbHelper.DURATION);
             } while (c.moveToNext());
         }
-        allWorkoutsField.setText(totalWorkouts);
-        allDistanceField.setText(String.valueOf(totalDistance));
-        allTimeField.setText(totalDuration);
-        allCalories.setText(totalCalories);
+        allWorkoutsText.setText(totalWorkouts);
+        allDistanceText.setText(String.valueOf(totalDistance));
+        allTimeText.setText(totalDuration);
+        allCaloriesText.setText(totalCalories);
 
-        weeklyWorkoutsField.setText(totalWorkouts);
+        weeklyWorkoutsText.setText(totalWorkouts);
         weeklyDistanceText.setText(String.valueOf(totalDistance));
-        weeklyTimeField.setText(totalDuration);
-        weeklyCalories.setText(totalCalories);
+        weeklyTimeText.setText(totalDuration);
+        weeklyCaloriesText.setText(totalCalories);
         c.close();
     }
 }
