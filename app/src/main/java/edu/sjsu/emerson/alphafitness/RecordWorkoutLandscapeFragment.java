@@ -1,10 +1,8 @@
 package edu.sjsu.emerson.alphafitness;
 
 import android.app.Fragment;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +17,8 @@ import com.github.mikephil.charting.data.LineDataSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+
+import static edu.sjsu.emerson.alphafitness.RecordWorkoutActivity.delay;
 
 /**
  * Created by emersonsjsu on 4/18/18.
@@ -28,7 +27,9 @@ import java.util.concurrent.TimeUnit;
 public class RecordWorkoutLandscapeFragment extends Fragment implements RecordWorkoutActivity.onNewStepCounterData
 {
     private static final String TAG = "DetailsFragment";
+    private static final String STEPS = "steps";
     User mUser;
+    ArrayList<Integer> steps = new ArrayList<>();
     TextView averageSpeedText, maxSpeedText, minSpeedText;
     LineChart lineChart;
 
@@ -37,6 +38,11 @@ public class RecordWorkoutLandscapeFragment extends Fragment implements RecordWo
     {
         super.onCreate(savedInstanceState);
         mUser = User.getInstance();
+        try {
+            steps = savedInstanceState.getIntegerArrayList(STEPS);
+        } catch (NullPointerException e){
+        steps = null;
+    }
     }
 
     @Nullable
@@ -48,12 +54,22 @@ public class RecordWorkoutLandscapeFragment extends Fragment implements RecordWo
         maxSpeedText = v.findViewById(R.id.maxSpeed);
         minSpeedText = v.findViewById(R.id.minSpeed);
         lineChart = v.findViewById(R.id.lineChart);
+        if (steps != null) drawChart(steps, delay);
         return v;
     }
 
+
     @Override
-    public void onNewStepData(List<Integer> steps, int updateInterval, int totalSteps)
+    public void onSaveInstanceState(Bundle outState)
     {
+        super.onSaveInstanceState(outState);
+        outState.putIntegerArrayList(STEPS, steps);
+    }
+
+    @Override
+    public void onNewStepData(ArrayList<Integer> steps, int updateInterval, int totalSteps)
+    {
+        this.steps = steps;
         int updateIntervalSec = updateInterval / 1000;
         long minutes = 0;
         int seconds = 0;
@@ -72,7 +88,7 @@ public class RecordWorkoutLandscapeFragment extends Fragment implements RecordWo
         // Max speed
         int maxStepsPerInterval = Collections.max(steps);
         double maxKm = stepsToKm(maxStepsPerInterval);
-        if(maxKm != 0) {
+        if (maxKm != 0) {
             double maxSecPerKm = updateIntervalSec / maxKm;
             minutes = (long) (maxSecPerKm / 60);
             seconds = (int) (maxSecPerKm % 60);
@@ -100,8 +116,9 @@ public class RecordWorkoutLandscapeFragment extends Fragment implements RecordWo
         drawChart(steps, updateInterval);
     }
 
-    private void drawChart(List<Integer> steps, int updateInterval)
+    private void drawChart(ArrayList<Integer> steps, int updateInterval)
     {
+        // Steps over time
         List<Entry> entries = new ArrayList<>();
         for (int i = 0; i < steps.size(); i++) {
             int data = steps.get(i);
@@ -114,6 +131,7 @@ public class RecordWorkoutLandscapeFragment extends Fragment implements RecordWo
         LineData lineData = new LineData(dataSet);
         lineChart.setData(lineData);
 
+        // Calories over time
         Description description = new Description();
         String formattedDescription = String.format("Steps per %d minutes and calories burnt over time", updateInterval / 1000);
         description.setText(formattedDescription);

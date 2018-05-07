@@ -17,7 +17,6 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import edu.sjsu.emerson.alphafitness.Utils.LocationUtils;
 import edu.sjsu.emerson.alphafitness.database.MyContentProvider;
@@ -33,7 +32,7 @@ import static edu.sjsu.emerson.alphafitness.RecordWorkoutPortraitFragment.BROADC
 public class RecordWorkoutActivity extends AppCompatActivity
 {
     private static final String TAG = "RecordWorkoutActivity";
-    private static final int delay = 5000; // milliseconds
+    public static final int delay = 5000; // milliseconds
     private static final String DISTANCE = "distance";
     private static final String LOCATION_ARRAY = "locationArray";
     private static final String STEP_ARRAY = "stepArray";
@@ -93,7 +92,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
             {
                 // execute ever 5 seconds
                 // test data
-                steps.add(steps.get(steps.size() - 1) + 1);
+                steps.add(10);
                 totalSteps += steps.get(steps.size() - 1);
                 try {
                     mNewStepCounterData.onNewStepData(steps, delay, totalSteps);
@@ -167,6 +166,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
                 case BROADCAST_NEW_WORKOUT:
                     locationsToDraw.clear();
                     distance = 0;
+                    steps.clear();
                     Log.i(TAG, "locationsToDraw cleared");
                     break;
                 case BROADCAST_STOP_WORKOUT:
@@ -192,7 +192,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
 
     interface onNewStepCounterData
     {
-        void onNewStepData(List<Integer> steps, int updateInterval, int totalSteps);
+        void onNewStepData(ArrayList<Integer> steps, int updateInterval, int totalSteps);
     }
 
     /**
