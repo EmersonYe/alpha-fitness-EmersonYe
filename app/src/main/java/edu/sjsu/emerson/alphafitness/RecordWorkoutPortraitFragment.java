@@ -38,6 +38,7 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
     public static final String BROADCAST_STOP_WORKOUT = "BroadcastStopWorkout";
 
     private static final String TAG = "PortraitFragment";
+    private static final String CHRONOMETER_BASE = "chronometerBase";
     MapView mMapView;
     private GoogleMap googleMap;
     private Polyline mPolyline;
@@ -51,9 +52,11 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
         mChronometer = rootView.findViewById(R.id.chronometer);
         mDistanceText = rootView.findViewById(R.id.text_distance);
         final Button toggleWorkoutButton = rootView.findViewById(R.id.button_start);
-        if (isServiceRunning(WorkoutTrackerService.class))
+        if (isServiceRunning(WorkoutTrackerService.class)) {
             toggleWorkoutButton.setText(R.string.stop_workout);
-        else
+            mChronometer.setBase(savedInstanceState.getLong(CHRONOMETER_BASE));
+            mChronometer.start();
+        } else
             toggleWorkoutButton.setText(R.string.start_workout);
 
         toggleWorkoutButton.setOnClickListener(new View.OnClickListener()
@@ -165,6 +168,7 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
     public void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
+        outState.putLong(CHRONOMETER_BASE, mChronometer.getBase());
     }
 
     @Override
