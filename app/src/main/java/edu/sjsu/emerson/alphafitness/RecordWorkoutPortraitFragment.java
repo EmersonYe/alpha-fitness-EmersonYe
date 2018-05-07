@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -103,10 +102,11 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
 
                 fragmentTransaction.commit();
                 /* test read from mysqlite. works! :)
+                */
                 Cursor c = getActivity().getContentResolver().query(MyContentProvider.URI, null, null, null, "date");
                 if (c.moveToFirst()) {
                     do {
-                        Toast.makeText(getActivity(), c.getString(c.getColumnIndex(MyContentProvider._ID))
+                        Log.i(TAG,c.getString(c.getColumnIndex(MyContentProvider._ID))
                                 + ", "
                                 + c.getString(
                                 c.getColumnIndex(workoutDbHelper.DATE))
@@ -118,12 +118,10 @@ public class RecordWorkoutPortraitFragment extends Fragment implements RecordWor
                                 c.getColumnIndex(workoutDbHelper.DURATION))
                                 + ","
                                 + c.getString(
-                                c.getColumnIndex(workoutDbHelper.STEPS)), Toast.LENGTH_SHORT
-                        ).show();
+                                c.getColumnIndex(workoutDbHelper.CALORIES)));
 
                     } while (c.moveToNext());
                 }
-                */
             }
         });
 

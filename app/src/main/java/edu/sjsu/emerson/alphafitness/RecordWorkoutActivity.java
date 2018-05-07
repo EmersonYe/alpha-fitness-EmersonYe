@@ -92,7 +92,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
                 try {
                     mNewStepCounterData.onNewStepData(steps, delay, totalSteps);
                 } catch (NullPointerException e) {
-                    Log.w(TAG, "no fragments listening to step updates");
+                    Log.d(TAG, "no fragments listening to step updates");
                 }
                 runnable = this;
                 handler.postDelayed(runnable, delay);
@@ -152,7 +152,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
                     try {
                         mLocationListener.onNewLocation(locationsToDraw, distance);
                     } catch (NullPointerException e) {
-                        Log.w(TAG, "no fragments listening to location updates");
+                        Log.d(TAG, "no fragments listening to location updates");
                     }
                     break;
                 case BROADCAST_STEP_COUNTER:
@@ -171,10 +171,11 @@ public class RecordWorkoutActivity extends AppCompatActivity
                     break;
                 case BROADCAST_STOP_WORKOUT:
                     ContentValues contentValues = new ContentValues();
-                    contentValues.put(workoutDbHelper.DATE, 2018);
+                    // TODO: replace hard coded date with dynamic date
+                    contentValues.put(workoutDbHelper.DATE, " 5-7-2018 ");
                     contentValues.put(workoutDbHelper.DISTANCE, distance);
                     contentValues.put(workoutDbHelper.DURATION, intent.getExtras().getInt(DURATION_SECONDS));
-                    contentValues.put(workoutDbHelper.STEPS, totalSteps);
+                    contentValues.put(workoutDbHelper.CALORIES, (int) (totalSteps/20));
                     Uri uri = getContentResolver().insert(MyContentProvider.URI, contentValues);
                     Toast.makeText(RecordWorkoutActivity.this, uri.toString(), Toast.LENGTH_LONG).show();
                     break;

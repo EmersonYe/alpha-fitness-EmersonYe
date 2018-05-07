@@ -15,16 +15,16 @@ public class workoutDbHelper extends SQLiteOpenHelper
     public static final String DATE = "date";
     public static final String DISTANCE = "distance";
     public static final String DURATION = "duration";
-    public static final String STEPS = "steps";
+    public static final String CALORIES = "calories";
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 5;
     private static final String CREATE_DB_TABLE =
             " CREATE TABLE " + WORKOUTS_TABLE_NAME +
                     " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                     DATE  + " TEXT NOT NULL, " +
-                     DISTANCE + " REAL NOT NULL, " +
-                     DURATION + " INTEGER NOT NULL, " +
-                     STEPS + " INTEGER NOT NULL);";
+                    DATE + " TEXT NOT NULL, " +
+                    DISTANCE + " REAL NOT NULL, " +
+                    DURATION + " INTEGER NOT NULL, " +
+                    CALORIES + " INTEGER NOT NULL);";
 
     public workoutDbHelper(Context context)
     {
