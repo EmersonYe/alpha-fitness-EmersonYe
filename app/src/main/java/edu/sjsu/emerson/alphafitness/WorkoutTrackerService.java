@@ -9,9 +9,12 @@ import android.hardware.SensorEventListener;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
+
+import static edu.sjsu.emerson.alphafitness.RecordWorkoutActivity.SENSOR_STEPS;
 
 public class WorkoutTrackerService extends Service implements SensorEventListener
 {
@@ -139,6 +142,7 @@ public class WorkoutTrackerService extends Service implements SensorEventListene
         } catch (IllegalArgumentException ex) {
             Log.d(TAG, "gps provider does not exist " + ex.getMessage());
         }
+        startSimulatingSteps();
     }
 
     @Override
@@ -163,5 +167,24 @@ public class WorkoutTrackerService extends Service implements SensorEventListene
         if (mLocationManager == null) {
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
+    }
+
+    private Handler handler = new Handler();
+    private Runnable runnable;
+
+    private void startSimulatingSteps()
+    {
+        handler.postDelayed(new Runnable()
+        {
+            public void run()
+            {
+                Intent intent = new Intent(BROADCAST_STEP_COUNTER);
+
+                intent.putExtra(SENSOR_STEPS, (int) (Math.random() * (10 - 2)) + 2);
+                sendBroadcast(intent);
+                runnable = this;
+                handler.postDelayed(runnable, 1000);
+            }
+        }, 1000);
     }
 }

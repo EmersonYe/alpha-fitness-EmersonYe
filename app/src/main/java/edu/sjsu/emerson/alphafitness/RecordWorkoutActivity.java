@@ -37,6 +37,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
     private static final String LOCATION_ARRAY = "locationArray";
     private static final String STEP_ARRAY = "stepArray";
     private static final String TOTAL_STEPS = "totalSteps";
+    public static final String SENSOR_STEPS = "sensorSteps";
     onNewLocationListener mLocationListener;
     onNewStepCounterData mNewStepCounterData;
     // Model for drawing Record Workout
@@ -45,7 +46,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
 
     // Data for drawing Details
     private static ArrayList<Integer> steps = new ArrayList<>();
-    private int totalSteps;
+    private int totalSteps = 0;
     // To execute action every 5 seconds
     Handler handler = new Handler();
     Runnable runnable;
@@ -55,10 +56,6 @@ public class RecordWorkoutActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_workout);
-        totalSteps = 0;
-        // test value
-        steps.add(13);
-        totalSteps = 13;
     }
 
     @Override
@@ -75,7 +72,6 @@ public class RecordWorkoutActivity extends AppCompatActivity
     protected void onResume()
     {
         super.onResume();
-        // TODO: make timer resume if service is running
         IntentFilter intentFilterStep = new IntentFilter(BROADCAST_STEP_COUNTER);
         IntentFilter intentFilterLocation = new IntentFilter(BROADCAST_LOCATION_CHANGE);
         IntentFilter intentFilterNewWorkout = new IntentFilter(BROADCAST_NEW_WORKOUT);
@@ -91,9 +87,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
             public void run()
             {
                 // execute ever 5 seconds
-                // test data
-                steps.add(10);
-                totalSteps += steps.get(steps.size() - 1);
+                steps.add(0);
                 try {
                     mNewStepCounterData.onNewStepData(steps, delay, totalSteps);
                 } catch (NullPointerException e) {
@@ -149,7 +143,7 @@ public class RecordWorkoutActivity extends AppCompatActivity
                     if (!locationsToDraw.isEmpty()) {
                         LatLng lastLocation = locationsToDraw.get(locationsToDraw.size() - 1);
                         //Log.e(TAG, lastLocation.latitude + " , " + lastLocation.longitude);
-                        Log.e(TAG, locationsToDraw.toString());
+                        //Log.e(TAG, locationsToDraw.toString());
                         newDistance = LocationUtils.distanceBetween(lastLocation, newLocation);
                     }
                     distance += newDistance;
@@ -161,7 +155,12 @@ public class RecordWorkoutActivity extends AppCompatActivity
                     }
                     break;
                 case BROADCAST_STEP_COUNTER:
-                    Toast.makeText(RecordWorkoutActivity.this, "Received step update", Toast.LENGTH_LONG).show();
+                    int numSteps = intent.getExtras().getInt(SENSOR_STEPS);
+                    if (steps.isEmpty())
+                        steps.add(numSteps);
+                    else
+                        steps.set(steps.size() - 1, steps.get(steps.size() - 1) + numSteps);
+                    totalSteps += numSteps;
                     break;
                 case BROADCAST_NEW_WORKOUT:
                     locationsToDraw.clear();
