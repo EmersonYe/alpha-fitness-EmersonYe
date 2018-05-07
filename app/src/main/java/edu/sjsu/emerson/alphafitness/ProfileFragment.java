@@ -98,15 +98,15 @@ public class ProfileFragment extends Fragment implements RecordWorkoutActivity.o
                 totalDuration += c.getColumnIndex(workoutDbHelper.DURATION);
             } while (c.moveToNext());
         }
-        allWorkoutsText.setText(totalWorkouts+"");
-        allDistanceText.setText(String.valueOf(totalDistance));
-        allTimeText.setText(totalDuration+"");
-        allCaloriesText.setText(totalCalories+"");
+        allWorkoutsText.setText(totalWorkouts+" workouts");
+        allDistanceText.setText(String.valueOf(totalDistance) + " miles");
+        allTimeText.setText(totalDuration+" seconds");
+        allCaloriesText.setText(totalCalories+" calories");
 
-        weeklyWorkoutsText.setText(totalWorkouts+"");
-        weeklyDistanceText.setText(String.valueOf(totalDistance));
-        weeklyTimeText.setText(totalDuration+"");
-        weeklyCaloriesText.setText(totalCalories+"");
+        weeklyWorkoutsText.setText(totalWorkouts+" workouts");
+        weeklyDistanceText.setText(String.valueOf(totalDistance) + " miles");
+        weeklyTimeText.setText(totalDuration+" seconds");
+        weeklyCaloriesText.setText(totalCalories+" calories");
         c.close();
     }
 }
